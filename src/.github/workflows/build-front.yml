@@ -1,0 +1,40 @@
+name: Build and Analyze Frontend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Historique complet nécessaire pour l'analyse
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Installe les dépendances pour que l'analyseur comprenne le code
+      - name: Install dependencies
+        run: npm install
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Fourni par GitHub
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Votre secret configuré à l'étape 4
+        with:
+          args: >
+            -Dsonar.organization=sontagmaxime
+            -Dsonar.projectKey=SontagMaxime_Tp_docker_front
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js
+            -Dsonar.exclusions=**/*.css,**/*.svg

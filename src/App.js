@@ -20,7 +20,7 @@ function App() {
 
 function getBooks () {
   
-  fetch("<host_a_changer>/librairy/books")
+  fetch("http://localhost:8080/librairy/books")
   .then(response => response.json())
   .then(data => {
       const books = data;
